@@ -1,0 +1,9 @@
+*.a
+*.out
+*.o
+build/
+*.dYSM
+*.plist
+printf.out
+libft.a
+libft
