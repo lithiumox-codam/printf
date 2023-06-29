@@ -6,4 +6,3 @@ build/
 *.plist
 printf.out
 libft.a
-libft

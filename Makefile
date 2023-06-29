@@ -7,7 +7,7 @@ CFLAGS = -Wall -Werror -Wextra
 LIBFT = libft
 BUILDDIR = build
 
-all: $(NAME)
+all: submodules $(NAME)
 
 $(BUILDDIR)/%.o: src/%.c | $(BUILDDIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -16,13 +16,13 @@ $(BUILDDIR):
 	@mkdir -p $(BUILDDIR)
 
 $(NAME): $(OBJECTS)
-	@ar rc $(NAME) $(OBJECTS)
-	@echo "\n\nCompilation completed for printf 🎉\n\n➤ ./$(NAME)"
-
-init:
-	@if [ ! -d $(LIBFT) ]; then \
-		git clone git@github.com:LithiumOx/libft.git $(LIBFT); \
-		echo "Libft cloned"; \
+	@if [ ! -f "./libft/libft.h" ]; then \
+		$(MAKE) submodules; \
+		ar rc $(NAME) $(OBJECTS); \
+		echo "\n\nCompilation completed for printf 1 🎉\n\n➤ ./$(NAME)"; \
+	else \
+		ar rc $(NAME) $(OBJECTS); \
+		echo "\n\nCompilation completed for printf 🎉\n\n➤ ./$(NAME)"; \
 	fi
 
 norm:
@@ -30,14 +30,22 @@ norm:
 
 clean:
 	@rm -f $(NAME)
+	@make clean -C $(LIBFT)
 
 fclean: clean
 	@rm -rf $(NAME)
 	@rm -rf $(BUILDDIR)
+	@make fclean -C $(LIBFT)
 
 re: fclean all
 
 run: $(NAME)
 	@gcc -fsanitize=address -Werror -Wall -Wextra -L. -lftprintf main.c  && ./a.out
+
+submodules:
+	echo "📥 Updating submodules..." \
+	git submodule sync > /dev/null \
+	git submodule update --init --recursive > /dev/null \
+	echo "✅ Submodules updated!" \
 
 .PHONY: all clean fclean re
